@@ -2,44 +2,62 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
+const fs = require('fs'); 
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-// Change this line to let the cloud provider pick the active port dynamically
 const PORT = process.env.PORT || 3000;
+const DB_FILE = path.join(__dirname, 'notices.json');
 
-
-// Allow Express to read JSON data sent from forms
 app.use(express.json());
 
-// Serve your HTML files directly when opening localhost:3000/admin or /display
+function getSavedNotices() {
+    if (!fs.existsSync(DB_FILE)) {
+        return []; 
+    }
+    const fileData = fs.readFileSync(DB_FILE, 'utf-8');
+    return JSON.parse(fileData || '[]');
+}
+
+function saveNoticesToDisk(noticesArray) {
+    fs.writeFileSync(DB_FILE, JSON.stringify(noticesArray, null, 2), 'utf-8');
+}
+
+// --- THIS IS THE NEW CODE YOU PASSED IN STEP 3 ---
+app.get('/', (req, res) => {
+    res.redirect('/display');
+});
+
 app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'admin.html'));
+    res.sendFile(path.resolve(__dirname, 'admin.html'));
 });
 
 app.get('/display', (req, res) => {
-    res.sendFile(path.join(__dirname, 'display.html'));
+    res.sendFile(path.resolve(__dirname, 'display.html'));
+});
+// -------------------------------------------------
+
+app.get('/api/notices', (req, res) => {
+    res.json(getSavedNotices());
 });
 
-// Manage incoming real-time screen connections
 io.on('connection', (socket) => {
-    console.log('A display monitor or admin page connected.');
+    console.log('Client connected.');
 
-    // Listen for new notices pushed from the admin dashboard
+    const activeNotices = getSavedNotices();
+    socket.emit('initial-load', activeNotices);
+
     socket.on('publish-notice', (noticeData) => {
-        console.log('New notice received:', noticeData);
-        // Instantly relay/broadcast this notice to all active display screens
+        const notices = getSavedNotices();
+        noticeData.id = Date.now();
+        notices.push(noticeData);
+        saveNoticesToDisk(notices);
         io.emit('update-display', noticeData);
     });
-
-    socket.on('disconnect', () => {
-        console.log('A client disconnected.');
-    });
 });
 
-// Start the server
 server.listen(PORT, () => {
-    console.log(`Server running successfully at http://localhost:${PORT}`);
+    console.log(`Server database operating smoothly at http://localhost:${PORT}`);
 });
