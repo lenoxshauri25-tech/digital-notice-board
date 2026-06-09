@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Notice Board Display</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        
+        /* Lock screen layout parameters to prevent physical scrolling */
+        body { 
+            background-color: #030712; 
+            color: #ffffff; 
+            width: 100vw; 
+            height: 100vh; 
+            overflow: hidden; 
+            display: grid;
+            grid-template-rows: 80px 1fr 60px; /* Header, Body content area, Ticker */
+        }
+
+        /* Top Header Board */
+        header { 
+            background: linear-gradient(90deg, #1e3a8a, #0f172a);
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 0 40px; 
+            border-bottom: 4px solid #facc15; 
+        }
+        header h1 { font-size: 2rem; text-transform: uppercase; letter-spacing: 1px; }
+        header h1 span { color: #facc15; }
+        header .time-widget { font-size: 1.8rem; font-weight: bold; color: #e2e8f0; }
+
+        /* Grid Content Sections Layout */
+        .board-content { 
+            display: grid; 
+            grid-template-columns: 4.5fr 3.5fr 4fr; /* 3 unequal metric column distribution */
+            gap: 25px; 
+            padding: 30px; 
+        }
+
+        /* Column Columns base styling rules */
+        .column { 
+            background-color: #0b1329; 
+            border: 2px solid #1e293b; 
+            border-radius: 12px; 
+            padding: 30px; 
+            display: flex;
+            flex-direction: column;
+        }
+        .column h2 { 
+            font-size: 1.8rem; 
+            text-transform: uppercase; 
+            border-bottom: 3px solid #334155; 
+            padding-bottom: 12px; 
+            margin-bottom: 25px; 
+            letter-spacing: 0.5px;
+        }
+
+        /* Column Specific Visual Highlights */
+        .col-urgent { background-color: #7f1d1d; border-color: #dc2626; }
+        .col-urgent h2 { border-bottom-color: #ef4444; color: #fecaca; }
+
+        /* Text Inner Styling formatting rules */
+        .announcement-text { font-size: 2.2rem; line-height: 1.5; font-weight: bold; color: #fff; }
+        
+        .event-list-item { margin-bottom: 25px; }
+        .event-list-item h3 { font-size: 1.8rem; color: #facc15; margin-bottom: 5px; }
+        .event-list-item p { font-size: 1.4rem; color: #cbd5e1; }
+
+        .news-item { font-size: 1.6rem; margin-bottom: 22px; line-height: 1.4; color: #f8fafc; border-left: 4px solid #3b82f6; padding-left: 15px; }
+
+        /* Smooth CSS Footer Marquee Animation */
+        footer { 
+            background-color: #facc15; 
+            color: #000000; 
+            overflow: hidden; 
+            display: flex; 
+            align-items: center; 
+        }
+        .ticker-wrap { width: 100%; overflow: hidden; }
+        .ticker-text {
+            display: inline-block;
+            white-space: nowrap;
+            font-size: 1.6rem;
+            font-weight: bold;
+            padding-left: 100%;
+            animation: marquee 25s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Panel UI -->
+    <header>
+        <h1>CENTRAL HIGH SCHOOL | <span>DIGITAL NOTICE BOARD</span></h1>
+        <div class="time-widget">OCT 19, 2026 | 10:45 AM</div>
+    </header>
+
+    <!-- Main Dynamic Content Sections Layout Grid System -->
+    <main class="board-content">
+        
+        <!-- Column 1: Critical Alerts Area -->
+        <section class="column col-urgent">
+            <h2>URGENT ALERTS</h2>
+            <div class="announcement-text">
+                MIDTERM EXAM SCHEDULE:<br>
+                OCT 23-27.<br>
+                View official timetable online.<br>
+                No mobile phones allowed!
+            </div>
+        </section>
+
+        <!-- Column 2: Scheduled Calendar Events Grid Panel -->
+        <section class="column">
+            <h2>UPCOMING EVENTS</h2>
+            <div class="event-list-item">
+                <h3>Science Fair</h3>
+                <p>(Oct 21)</p>
+            </div>
+            <div class="event-list-item">
+                <h3>Volleyball Match</h3>
+                <p>(Oct 24)</p>
+            </div>
+            <div class="event-list-item">
+                <h3>Winter Concert</h3>
+                <p>(Nov 10)</p>
+            </div>
+        </section>
+
+        <!-- Column 3: Custom Announcements Panel Section Layout -->
+        <section class="column">
+            <h2>CAMPUS NEWS</h2>
+            <div class="news-item">New Library Hours (8AM - 8PM)</div>
+            <div class="news-item">Lost & Found: Room 204</div>
+            <div class="news-item">Student Council Elections: Apply Now!</div>
+        </section>
+
+    </main>
+
+    <!-- Marquee Banner Element Layout Structure Footer Area -->
+    <footer>
+        <div class="ticker-wrap">
+            <div class="ticker-text">
+                * Reminder: Club Registration deadline is Friday at 5:00 PM * Reminder: Mandatory safety drill next Tuesday during 3rd period *
+            </div>
+        </div>
+    </footer>
+        <!-- Add this right before the closing </body> tag -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        // Listen for the 'update-display' signal from your Node.js server
+        socket.on('update-display', (data) => {
+            
+            // Find the elements on the display screen
+            const urgentColumn = document.querySelector('.col-urgent');
+            const urgentTitle = urgentColumn.querySelector('h2');
+            const urgentText = urgentColumn.querySelector('.announcement-text');
+
+            // Update the display text layout dynamically based on priority
+            if (data.priority === 'High') {
+                urgentTitle.innerText = "URGENT ALERT: " + data.title.toUpperCase();
+                urgentText.innerHTML = data.message.replace(/\n/g, '<br>');
+            } else {
+                // If normal priority, update the general campus news column instead
+                const newsColumn = document.querySelectorAll('.column')[2]; 
+                const newAlert = document.createElement('div');
+                newAlert.className = 'news-item';
+                newAlert.innerText = `${data.title}: ${data.message}`;
+                newsColumn.appendChild(newAlert);
+            }
+        });
+    </script>
+
+
+</body>
+</html>
