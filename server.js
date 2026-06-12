@@ -44,20 +44,32 @@ app.get('/api/notices', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-    console.log('Client connected.');
+    console.log('Client connected to shop network.');
 
-    const activeNotices = getSavedNotices();
-    socket.emit('initial-load', activeNotices);
+    // Send currently running promotions immediately on boot
+    socket.emit('initial-load', getSavedNotices());
 
+    // Listen for new promotions sent by the manager
     socket.on('publish-notice', (noticeData) => {
         const notices = getSavedNotices();
-        noticeData.id = Date.now();
+        noticeData.id = "id_" + Date.now(); // Generate a clean string ID
         notices.push(noticeData);
         saveNoticesToDisk(notices);
+        
+        // Broadcast the update to all systems
         io.emit('update-display', noticeData);
+        io.emit('refresh-admin-list', notices); // Keep admin panels synced
+    });
+
+    // NEW FEATURE: Listen for explicit manual delete signals
+    socket.on('delete-notice', (idToDelete) => {
+        let notices = getSavedNotices();
+        // Filter out the item matching the deleted ID
+        notices = notices.filter(item => item.id !== idToDelete);
+        saveNoticesToDisk(notices);
+
+        // Tell all active screens to clear their layout data and reload fresh
+        io.emit('clear-and-reload');
     });
 });
 
-server.listen(PORT, () => {
-    console.log(`Server database operating smoothly at http://localhost:${PORT}`);
-});

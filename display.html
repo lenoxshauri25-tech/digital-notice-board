@@ -3,89 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Notice Board Display</title>
+    <title>Naivas Digital Signage Display</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; }
         
-        /* Lock screen layout parameters to prevent physical scrolling */
+        /* Fixed canvas to perfectly fit retail monitors */
         body { 
-            background-color: #030712; 
+            background-color: #0b0f19; 
             color: #ffffff; 
             width: 100vw; 
             height: 100vh; 
             overflow: hidden; 
             display: grid;
-            grid-template-rows: 80px 1fr 60px; /* Header, Body content area, Ticker */
+            grid-template-rows: 90px 1fr 65px; 
         }
 
-        /* Top Header Board */
+        /* Naivas Brand Header */
         header { 
-            background: linear-gradient(90deg, #1e3a8a, #0f172a);
+            background: linear-gradient(90deg, #ff6600, #008000); /* Naivas Orange to Green */
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
             padding: 0 40px; 
-            border-bottom: 4px solid #facc15; 
+            border-bottom: 5px solid #ffffff; 
         }
-        header h1 { font-size: 2rem; text-transform: uppercase; letter-spacing: 1px; }
-        header h1 span { color: #facc15; }
-        header .time-widget { font-size: 1.8rem; font-weight: bold; color: #e2e8f0; }
+        header h1 { font-size: 2.2rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #fff; }
+        header h1 span { color: #ffffff; background-color: rgba(0,0,0,0.2); padding: 2px 10px; border-radius: 4px; }
+        header .time-widget { font-size: 1.8rem; font-weight: bold; color: #ffffff; background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 6px; }
 
-        /* Grid Content Sections Layout */
+        /* Content Grid Setup */
         .board-content { 
             display: grid; 
-            grid-template-columns: 4.5fr 3.5fr 4fr; /* 3 unequal metric column distribution */
+            grid-template-columns: 4.5fr 3.8fr 3.7fr; 
             gap: 25px; 
             padding: 30px; 
         }
 
-        /* Column Columns base styling rules */
+        /* Section Cards */
         .column { 
-            background-color: #0b1329; 
-            border: 2px solid #1e293b; 
-            border-radius: 12px; 
+            background-color: #121829; 
+            border: 2px solid #222d4a; 
+            border-radius: 16px; 
             padding: 30px; 
             display: flex;
             flex-direction: column;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
         .column h2 { 
             font-size: 1.8rem; 
+            font-weight: 800;
             text-transform: uppercase; 
-            border-bottom: 3px solid #334155; 
+            border-bottom: 4px solid #ff6600; 
             padding-bottom: 12px; 
             margin-bottom: 25px; 
             letter-spacing: 0.5px;
+            color: #ff6600;
         }
 
-        /* Column Specific Visual Highlights */
-        .col-urgent { background-color: #7f1d1d; border-color: #dc2626; }
-        .col-urgent h2 { border-bottom-color: #ef4444; color: #fecaca; }
+        /* High Visibility Flash Sale Highlight Panel */
+        .col-flash { background-color: #1a0f00; border-color: #ff6600; }
+        .col-flash h2 { border-bottom-color: #ff6600; color: #ff6600; animation: pulse 2s infinite; }
 
-        /* Text Inner Styling formatting rules */
-        .announcement-text { font-size: 2.2rem; line-height: 1.5; font-weight: bold; color: #fff; }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        /* Typography & Presentation Content Rules */
+        .announcement-text { font-size: 2.4rem; line-height: 1.4; font-weight: 800; color: #fff; }
+        .price-highlight { color: #ff6600; font-size: 3.5rem; display: block; margin-top: 15px; text-shadow: 2px 2px 0px #000; }
         
-        .event-list-item { margin-bottom: 25px; }
-        .event-list-item h3 { font-size: 1.8rem; color: #facc15; margin-bottom: 5px; }
-        .event-list-item p { font-size: 1.4rem; color: #cbd5e1; }
+        .event-list-item { margin-bottom: 25px; border-bottom: 1px dashed #222d4a; padding-bottom: 15px; }
+        .event-list-item:last-child { border: none; }
+        .event-list-item h3 { font-size: 1.8rem; color: #00ff00; margin-bottom: 5px; }
+        .event-list-item p { font-size: 1.5rem; color: #ffffff; font-weight: bold; }
 
-        .news-item { font-size: 1.6rem; margin-bottom: 22px; line-height: 1.4; color: #f8fafc; border-left: 4px solid #3b82f6; padding-left: 15px; }
+        .news-item { font-size: 1.6rem; margin-bottom: 22px; line-height: 1.4; color: #f8fafc; border-left: 5px solid #008000; padding-left: 15px; font-weight: 600; }
 
-        /* Smooth CSS Footer Marquee Animation */
+        /* Ticker Styling */
         footer { 
-            background-color: #facc15; 
-            color: #000000; 
+            background-color: #ff6600; 
+            color: #ffffff; 
             overflow: hidden; 
             display: flex; 
             align-items: center; 
+            border-top: 4px solid #008000;
         }
         .ticker-wrap { width: 100%; overflow: hidden; }
         .ticker-text {
             display: inline-block;
             white-space: nowrap;
-            font-size: 1.6rem;
+            font-size: 1.7rem;
             font-weight: bold;
             padding-left: 100%;
-            animation: marquee 25s linear infinite;
+            animation: marquee 28s linear infinite;
         }
         @keyframes marquee {
             0% { transform: translate3d(0, 0, 0); }
@@ -95,89 +107,109 @@
 </head>
 <body>
 
-    <!-- Header Panel UI -->
     <header>
-        <h1>CENTRAL HIGH SCHOOL | <span>DIGITAL NOTICE BOARD</span></h1>
-        <div class="time-widget">OCT 19, 2026 | 10:45 AM</div>
+        <h1>NAIVAS | <span>DIGITAL PROMOTIONS</span></h1>
+        <div class="time-widget" id="liveClock">Loading Details...</div>
     </header>
 
-    <!-- Main Dynamic Content Sections Layout Grid System -->
     <main class="board-content">
         
-        <!-- Column 1: Critical Alerts Area -->
-        <section class="column col-urgent">
-            <h2>URGENT ALERTS</h2>
-            <div class="announcement-text">
-                MIDTERM EXAM SCHEDULE:<br>
-                OCT 23-27.<br>
-                View official timetable online.<br>
-                No mobile phones allowed!
+        <!-- Column 1: Active In-Store Flash Sales -->
+        <section class="column col-flash">
+            <h2>🔥 FLASH DEALS</h2>
+            <div class="announcement-text" id="targetNotice">
+                UNGA WA MOMBASA<br>
+                2KG PACK SPECIAL!<br>
+                Offer valid for 1 hour.<br>
+                <span class="price-highlight">KSH 145 ONLY</span>
             </div>
         </section>
 
-        <!-- Column 2: Scheduled Calendar Events Grid Panel -->
+        <!-- Column 2: Weekly Category Discounts -->
         <section class="column">
-            <h2>UPCOMING EVENTS</h2>
+            <h2>🛒 WEEKLY SPECIALS</h2>
             <div class="event-list-item">
-                <h3>Science Fair</h3>
-                <p>(Oct 21)</p>
+                <h3>Fresh Bakery Offers</h3>
+                <p>Buy 2 Loaves, Get 1 Free!</p>
             </div>
             <div class="event-list-item">
-                <h3>Volleyball Match</h3>
-                <p>(Oct 24)</p>
+                <h3>Butchery Section</h3>
+                <p>10% Off on Beef Prime Cuts</p>
             </div>
             <div class="event-list-item">
-                <h3>Winter Concert</h3>
-                <p>(Nov 10)</p>
+                <h3>Electronics Madness</h3>
+                <p>Smart TVs up to 20% Off</p>
             </div>
         </section>
 
-        <!-- Column 3: Custom Announcements Panel Section Layout -->
+        <!-- Column 3: General Branch Customer Communication -->
         <section class="column">
-            <h2>CAMPUS NEWS</h2>
-            <div class="news-item">New Library Hours (8AM - 8PM)</div>
-            <div class="news-item">Lost & Found: Room 204</div>
-            <div class="news-item">Student Council Elections: Apply Now!</div>
+            <h2>💡 CUSTOMER INFO</h2>
+            <div class="news-item">Earn double Reward Points today!</div>
+            <div class="news-item">Naivas Kilocol Deliveries open until 9 PM.</div>
+            <div class="news-item">Ask for your free Naivas Card at Customer Care.</div>
         </section>
 
     </main>
 
-    <!-- Marquee Banner Element Layout Structure Footer Area -->
     <footer>
         <div class="ticker-wrap">
             <div class="ticker-text">
-                * Reminder: Club Registration deadline is Friday at 5:00 PM * Reminder: Mandatory safety drill next Tuesday during 3rd period *
+                * Welcome to Naivas Supermarket, Saver of Your Money * Check your receipts for surprise instant cash-back vouchers * Fresh fruits restocked daily at the grocery department *
             </div>
         </div>
     </footer>
-        <!-- Add this right before the closing </body> tag -->
+
+        <!-- PASTE THIS STARTING FROM HERE TO THE BOTTOM OF DISPLAY.HTML -->
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
 
-        // Listen for the 'update-display' signal from your Node.js server
-        socket.on('update-display', (data) => {
-            
-            // Find the elements on the display screen
-            const urgentColumn = document.querySelector('.col-urgent');
-            const urgentTitle = urgentColumn.querySelector('h2');
-            const urgentText = urgentColumn.querySelector('.announcement-text');
+        function updateClock() {
+            const now = new Date();
+            const dateOptions = { month: 'short', day: 'numeric', year: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+            document.getElementById('liveClock').innerText = `${now.toLocaleDateString('en-US', dateOptions).toUpperCase()} | ${now.toLocaleTimeString('en-US', timeOptions)}`;
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
 
-            // Update the display text layout dynamically based on priority
+        function renderNoticeOnScreen(data) {
+            const flashColumn = document.querySelector('.col-flash');
+            const flashTitle = flashColumn.querySelector('h2');
+            const flashText = flashColumn.querySelector('.announcement-text');
+            // Look for the specific Customer Info container
+            const allColumns = document.querySelectorAll('.column');
+            const infoColumn = allColumns[2]; 
+
             if (data.priority === 'High') {
-                urgentTitle.innerText = "URGENT ALERT: " + data.title.toUpperCase();
-                urgentText.innerHTML = data.message.replace(/\n/g, '<br>');
+                flashTitle.innerText = "🔥 " + data.title.toUpperCase();
+                flashText.innerHTML = data.message.replace(/\n/g, '<br>');
             } else {
-                // If normal priority, update the general campus news column instead
-                const newsColumn = document.querySelectorAll('.column')[2]; 
                 const newAlert = document.createElement('div');
                 newAlert.className = 'news-item';
-                newAlert.innerText = `${data.title}: ${data.message}`;
-                newsColumn.appendChild(newAlert);
+                newAlert.innerHTML = `<strong>${data.title}</strong>: ${data.message}`;
+                infoColumn.appendChild(newAlert);
             }
+        }
+
+        socket.on('initial-load', (savedNoticesArray) => {
+            // Locate Customer Info card to wipe static news items before rendering database entries
+            const allColumns = document.querySelectorAll('.column');
+            const infoColumn = allColumns[2];
+            const defaultItems = infoColumn.querySelectorAll('.news-item');
+            defaultItems.forEach(el => el.remove());
+
+            savedNoticesArray.forEach(notice => renderNoticeOnScreen(notice));
+        });
+
+        socket.on('update-display', (data) => {
+            renderNoticeOnScreen(data);
+        });
+
+        socket.on('clear-and-reload', () => {
+            window.location.reload(); 
         });
     </script>
-
-
 </body>
 </html>

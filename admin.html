@@ -3,142 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Control Center - SDB</title>
+    <title>Naivas Merchandising Controller</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
-        body { background-color: #121620; color: #ffffff; display: flex; flex-direction: column; height: 100vh; }
+        body { background-color: #0c101a; color: #ffffff; display: flex; flex-direction: column; height: 100vh; }
         
-        /* Header */
-        header { background-color: #1a1f2c; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2a3245; }
-        header h1 { font-size: 1.25rem; font-weight: 600; color: #4facfe; }
-        header .user-profile { font-size: 0.9rem; color: #a0aec0; }
+        header { background-color: #131929; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ff6600; }
+        header h1 { font-size: 1.3rem; font-weight: 700; color: #ff6600; }
+        header .user-profile { font-size: 0.9rem; color: #00ff00; font-weight: bold; }
 
-        /* Main Workspace Layout */
         .workspace { display: flex; flex: 1; overflow: hidden; }
 
-        /* Left Form Panel */
-        .form-panel { flex: 1; padding: 40px; overflow-y: auto; max-width: 600px; border-right: 1px solid #2a3245; }
-        .form-panel h2 { font-size: 1.4rem; margin-bottom: 25px; color: #fff; }
+        .form-panel { flex: 1; padding: 40px; overflow-y: auto; max-width: 550px; border-right: 1px solid #1c263d; }
+        .form-panel h2 { font-size: 1.4rem; margin-bottom: 25px; color: #fff; border-left: 4px solid #ff6600; padding-left: 10px; }
         .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: #a0aec0; text-transform: uppercase; letter-spacing: 0.5px; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; background-color: #1a1f2c; border: 1px solid #3b465e; border-radius: 6px; color: #fff; font-size: 1rem; outline: none; }
-        .form-group input:focus, .form-group textarea:focus { border-color: #007bff; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: #8fa0c2; text-transform: uppercase; font-weight: bold; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; background-color: #131929; border: 1px solid #24314f; border-radius: 6px; color: #fff; font-size: 1rem; outline: none; }
+        .form-group input:focus, .form-group textarea:focus { border-color: #ff6600; }
         
         .row-group { display: flex; gap: 20px; }
         .row-group .form-group { flex: 1; }
         
-        .btn-publish { width: 100%; padding: 14px; background-color: #0052cc; color: white; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 10px; }
-        .btn-publish:hover { background-color: #0066ff; }
+        .btn-publish { width: 100%; padding: 14px; background-color: #ff6600; color: white; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 10px; }
+        .btn-publish:hover { background-color: #e65c00; }
 
-        /* Right Preview/Live Panel */
-        .live-panel { flex: 1; padding: 40px; overflow-y: auto; background-color: #161b26; }
-        .live-panel h2 { font-size: 1.4rem; margin-bottom: 25px; color: #fff; }
+        .live-panel { flex: 1; padding: 40px; overflow-y: auto; background-color: #0e1321; }
+        .live-panel h2 { font-size: 1.4rem; margin-bottom: 25px; color: #fff; border-left: 4px solid #008000; padding-left: 10px; }
         
-        /* Live Item Cards */
-        .notice-card { background-color: #1a1f2c; border-left: 5px solid #ff4d4d; padding: 15px; border-radius: 4px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .notice-card.warning { border-left-color: #ffad33; }
-        .notice-card.info { border-left-color: #33cc33; }
+        .notice-card { background-color: #131929; border-left: 5px solid #ff6600; padding: 15px; border-radius: 6px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .notice-card.info { border-left-color: #008000; }
         
-        .card-details h3 { font-size: 1.05rem; margin-bottom: 4px; }
-        .card-details p { font-size: 0.85rem; color: #a0aec0; }
+        .card-details h3 { font-size: 1.1rem; margin-bottom: 4px; color: #fff; }
+        .card-details p { font-size: 0.85rem; color: #8fa0c2; }
         
-        .btn-delete { background-color: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
-        .btn-delete:hover { background-color: #ff3333; }
+        .btn-delete { background-color: #cc2424; color: white; border: none; padding: 7px 14px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold; }
+        .btn-delete:hover { background-color: #b31c1c; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>SCHOOL DIGITAL BOARD | ADMIN CONTROL CENTER</h1>
-        <div class="user-profile">Admin: John Doe ▼</div>
+        <h1>NAIVAS SYSTEM MANAGER | PROMOTIONS ENGINE</h1>
+        <div class="user-profile">● Store Controller Active</div>
     </header>
 
     <div class="workspace">
-        <!-- Form Section -->
         <div class="form-panel">
-            <h2>CREATE NEW NOTICE</h2>
+            <h2>LAUNCH ADVERTISEMENT</h2>
             <form id="noticeForm">
                 <div class="form-group">
-                    <label>Title</label>
-                    <input type="text" placeholder="e.g., Urgent: Midterm Exam Schedule" required>
+                    <label>Deal / Offer Header</label>
+                    <input type="text" placeholder="e.g., Unga Wa Dola 2KG Pack" required>
                 </div>
                 <div class="form-group">
-                    <label>Message</label>
-                    <textarea rows="5" placeholder="Type your announcement details here..." required></textarea>
+                    <label>Promo Details & Pricing</label>
+                    <textarea rows="4" placeholder="Type the offer message or price tag details..." required></textarea>
                 </div>
                 <div class="row-group">
                     <div class="form-group">
-                        <label>Priority</label>
+                        <label>Display Target</label>
                         <select>
-                            <option>High</option>
-                            <option>Medium</option>
-                            <option>Low</option>
+                            <option value="High">Flash Deals (Main Section)</option>
+                            <option value="Low">Customer Info (Sidebar)</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>Duration / Expiry</label>
-                        <input type="date">
-                    </div>
                 </div>
-                <button type="submit" class="btn-publish">PUBLISH NOW</button>
+                <button type="submit" class="btn-publish">BROADCAST TO STORE SCREENS</button>
             </form>
         </div>
 
-        <!-- Live Monitors Monitoring View -->
         <div class="live-panel">
-            <h2>LIVE ON SCREENS</h2>
+            <h2>CURRENTLY MONITORING LIVE CAMPAIGNS</h2>
             
             <div class="notice-card">
                 <div class="card-details">
-                    <h3>Emergency Closure</h3>
-                    <p>Expiring: Today at 5:00 PM</p>
+                    <h3>Unga Wa Mombasa Offer</h3>
+                    <p>Target: Flash Deals Section</p>
                 </div>
-                <button class="btn-delete">Remove</button>
-            </div>
-
-            <div class="notice-card warning">
-                <div class="card-details">
-                    <h3>Library Hours Change</h3>
-                    <p>Status: Active</p>
-                </div>
-                <button class="btn-delete">Remove</button>
+                <button class="btn-delete">End Deal</button>
             </div>
 
             <div class="notice-card info">
                 <div class="card-details">
-                    <h3>Science Fair Sign-up</h3>
-                    <p>Status: Active</p>
+                    <h3>Double Loyalty Points Alert</h3>
+                    <p>Target: Customer Info Sidebar</p>
                 </div>
-                <button class="btn-delete">Remove</button>
+                <button class="btn-delete">End Deal</button>
             </div>
         </div>
     </div>
 
-    <!-- Add this right before the closing </body> tag -->
+        <!-- PASTE THIS STARTING FROM HERE TO THE BOTTOM OF ADMIN.HTML -->
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
         const noticeForm = document.getElementById('noticeForm');
+        // Target the live-panel layout card wrapper area
+        const liveContainer = document.querySelector('.live-panel');
 
         noticeForm.addEventListener('submit', (e) => {
-            e.preventDefault(); // Stop page from reloading
-
-            // Gather values from the form inputs
+            e.preventDefault();
             const title = noticeForm.querySelector('input[type="text"]').value;
             const message = noticeForm.querySelector('textarea').value;
             const priority = noticeForm.querySelector('select').value;
 
-            // Package the data
-            const noticeData = { title, message, priority };
-
-            // Send data instantly to the backend server
-            socket.emit('publish-notice', noticeData);
-
-            // Optional: Clear the input fields after sending
+            socket.emit('publish-notice', { title, message, priority });
             noticeForm.reset();
-            alert('Notice broadcasted successfully!');
         });
-    </script>
-    </body>
 
+        function updateAdminTrackingUI(noticesArray) {
+            const header = liveContainer.querySelector('h2');
+            liveContainer.innerHTML = '';
+            liveContainer.appendChild(header);
+
+            if(noticesArray.length === 0) {
+                liveContainer.innerHTML += `<p style="color: #8fa0c2; margin-top:20px; font-weight:600;">No active promotions on screens.</p>`;
+                return;
+            }
+
+            noticesArray.forEach(item => {
+                const card = document.createElement('div');
+                card.className = `notice-card ${item.priority !== 'High' ? 'info' : ''}`;
+                card.innerHTML = `
+                    <div class="card-details">
+                        <h3>${item.title}</h3>
+                        <p>Section: ${item.priority === 'High' ? 'Flash Deals' : 'Customer Info'}</p>
+                    </div>
+                    <button class="btn-delete" onclick="triggerDelete('${item.id}')">End Deal</button>
+                `;
+                liveContainer.appendChild(card);
+            });
+        }
+
+        window.triggerDelete = function(id) {
+            if(confirm("Are you sure you want to pull this deal off the store floor?")) {
+                socket.emit('delete-notice', id);
+            }
+        }
+
+        socket.on('initial-load', (data) => updateAdminTrackingUI(data));
+        socket.on('refresh-admin-list', (data) => updateAdminTrackingUI(data));
+        socket.on('clear-and-reload', () => window.location.reload());
+    </script>
+</body>
 </html>
